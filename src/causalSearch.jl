@@ -1,6 +1,7 @@
 using DataStructures: PriorityQueue, enqueue!, dequeue_pair!
 using DataFrames: DataFrame
 using CategoricalArrays: CategoricalArray
+using Printf
 
 struct CausalSearchResult
     S                               ::Union{Vector{Int64}, Vector{Symbol}}

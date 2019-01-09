@@ -1,6 +1,6 @@
-import Base.cov
+import Statistics: cov
 using StatsBase: sample
-using UnicodePlots.spy
+using UnicodePlots: spy
 
 abstract type SEM end
 
