@@ -3,3 +3,5 @@ Distributions
 StatsBase
 DataFrames
 GLM
+DelimitedFiles
+Test

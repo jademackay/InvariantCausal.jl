@@ -1,6 +1,8 @@
-using Base.Test
-using StatsBase.sample
+using Test
+using StatsBase: sample
 using DataFrames
+using DelimitedFiles
+using InvariantCausal
 
 @time @testset "causal search" begin
     X = readdlm(joinpath(@__DIR__, "X1.dat"))
