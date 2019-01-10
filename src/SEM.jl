@@ -1,6 +1,7 @@
 import Statistics: cov
 using StatsBase: sample
 using UnicodePlots: spy
+using LinearAlgebra: UpperTriangular, I
 
 abstract type SEM end
 
@@ -33,7 +34,7 @@ do-interventions can be performed by specifying vectors of `do_variables` and `d
 function simulate(sem::GaussianSEM)
     p = sem.p
     ϵ = randn(p) .* sqrt.(sem.err_var)
-    return (eye(p) - sem.B) \ ϵ
+    return (Matrix{Float64}(I, p, p) - sem.B) \ ϵ
 end
 
 function simulate(sem::GaussianSEM, do_variables::Vector{Int64}, do_values::Vector{Float64})
@@ -42,8 +43,8 @@ function simulate(sem::GaussianSEM, do_variables::Vector{Int64}, do_values::Vect
     ϵ = randn(p) .* sqrt.(sem.err_var)
     ϵ[do_variables] = do_values
     B = copy(sem.B)
-    B[do_variables, :] = 0
-    return (eye(p) - B) \ ϵ
+    B[do_variables, :] .= 0
+    return (Matrix{Float64}(I, p, p) - B) \ ϵ
 end
 
 function simulate(sem::GaussianSEM, n::Int64)
@@ -73,11 +74,11 @@ Generate a random-graph acyclic SEM with `p` variables and `k` average degree, a
 """
 function random_gaussian_SEM(p::Int64, k::Int64; lb=-2, ub=2, var_min=0.5, var_max=2)
     B = zeros(p, p)
-    B[rand(p, p) .< 2k / (p-1)] = 1
-    B[UpperTriangular(B).!=0] = 0
+    B[rand(p, p) .< 2k / (p-1)] .= 1
+    B[UpperTriangular(B).!=0] .= 0
     m = sum(B.==1)
-    B[B.==1] = (rand(m) * (ub - lb) + lb) .* sign.(randn(m))
-    err_var = rand(p) * (var_max - var_min) + var_min
+    B[B.==1] = (rand(m) * (ub - lb) .+ lb) .* sign.(randn(m))
+    err_var = rand(p) * (var_max - var_min) .+ var_min
     _order = sample(1:p, p, replace=false)
     B = B[_order, _order]
     return GaussianSEM(B, err_var)
@@ -107,7 +108,7 @@ function random_noise_intervened_SEM(sem::GaussianSEM;
         err_var[i] = err_var[i] * noise_multiplier
         if rand() > prob_coeff_unchanged
             _J = (1:p)[B[i, :].!=0]
-            B[i, _J] = rand(length(_J)) * (ub - lb) + lb
+            B[i, _J] = rand(length(_J)) * (ub - lb) .+ lb
         end
     end
     return GaussianSEM(B, err_var), vars

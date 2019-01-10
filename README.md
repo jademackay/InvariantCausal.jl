@@ -42,9 +42,9 @@ julia> InvariantCausal._test_full()
 Generate a simple [Gaussian structure equation model](https://en.wikipedia.org/wiki/Structural_equation_modeling?oldformat=true) (SEM) with random graph with 21 variables and average degree 3. Note that we assume the SEM is acyclic. The model can be represented as `X = B X + ϵ` with zeros on the diagonals of B (no self-loop). `ϵ` is a vector of independent Gaussian errors. For a variable `i`, variables `j` with coefficients `B[i,j]` non-zero are called the direct causes of `i`. We assume `B` is sparse, and its sparsity pattern is visualized with [UnicodePlots.jl](https://github.com/Evizero/UnicodePlots.jl).
 
 ```julia
-julia> using InvariantCausal
+julia> using InvariantCausal, Random
 
-julia> srand(1926)
+julia> Random.seed!(1926)
 julia> sem_obs = random_gaussian_SEM(21, 3)
 Gaussian SEM with 21 variables:
 B =
